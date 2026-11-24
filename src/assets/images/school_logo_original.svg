@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="outerRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E6C35C" />
+      <stop offset="50%" stop-color="#C59B27" />
+      <stop offset="100%" stop-color="#9A7616" />
+    </linearGradient>
+    <radialGradient id="medallionBg" cx="50%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#0B4F3A" />
+      <stop offset="65%" stop-color="#063729" />
+      <stop offset="100%" stop-color="#04241B" />
+    </radialGradient>
+    <linearGradient id="goldLeaf" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F7DF88" />
+      <stop offset="55%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#A8821B" />
+    </linearGradient>
+    <linearGradient id="skyAzure" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7DD3FC" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Circular Shield with Clean Border -->
+  <circle cx="256" cy="256" r="246" fill="url(#medallionBg)" stroke="url(#outerRing)" stroke-width="14" />
+  <circle cx="256" cy="256" r="228" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-opacity="0.55" />
+
+  <!-- Concentric Academic Sanctuary Arches -->
+  <path
+    d="M 102 264 A 154 156 0 1 1 410 264"
+    fill="none"
+    stroke="url(#skyAzure)"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 124 268 A 132 134 0 1 1 388 268"
+    fill="none"
+    stroke="url(#goldLeaf)"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 146 270 A 110 112 0 1 1 366 270"
+    fill="none"
+    stroke="url(#skyAzure)"
+    stroke-width="7"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+  />
+
+  <!-- Center Graduation Cap & Fountain Pen Nib -->
+  <polygon points="256,162 294,179 256,196 218,179" fill="url(#goldLeaf)" />
+  <path
+    d="M 235 189 L 256 199 L 277 189 L 277 202 C 266 210, 246 210, 235 202 Z"
+    fill="url(#goldLeaf)"
+  />
+  <line x1="290" y1="181" x2="290" y2="205" stroke="#F7DF88" stroke-width="3" stroke-linecap="round" />
+  <circle cx="290" cy="208" r="3.5" fill="#F7DF88" />
+
+  <!-- Pen Nib -->
+  <path
+    d="M 256 214 L 270 250 L 256 296 L 242 250 Z"
+    fill="url(#skyAzure)"
+    stroke="#E0F2FE"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+  <line x1="256" y1="216" x2="256" y2="246" stroke="#04241B" stroke-width="2.5" />
+  <circle cx="256" cy="252" r="4.5" fill="#04241B" />
+
+  <!-- Left & Right Stylized Laurel / Scholarly Wings -->
+  <path
+    d="M 244 298 C 216 250, 178 232, 134 234 L 140 212 C 176 212, 214 230, 244 276 Z"
+    fill="url(#skyAzure)"
+    fill-opacity="0.92"
+  />
+  <path
+    d="M 268 298 C 296 250, 334 232, 378 234 L 372 212 C 336 212, 298 230, 268 276 Z"
+    fill="url(#skyAzure)"
+    fill-opacity="0.92"
+  />
+
+  <!-- Open Golden Book (Upper & Lower Pages) -->
+  <path
+    d="M 250 314 C 202 278, 146 270, 96 274 L 103 248 C 156 246, 210 260, 250 298 Z"
+    fill="#F7DF88"
+  />
+  <path
+    d="M 262 314 C 310 278, 366 270, 416 274 L 409 248 C 356 246, 302 260, 262 298 Z"
+    fill="#F7DF88"
+  />
+  <path
+    d="M 250 328 C 198 304, 136 300, 78 306 L 86 282 C 146 278, 206 288, 250 318 Z"
+    fill="url(#goldLeaf)"
+  />
+  <path
+    d="M 262 328 C 314 304, 376 300, 434 306 L 426 282 C 366 278, 306 288, 262 318 Z"
+    fill="url(#goldLeaf)"
+  />
+  <circle cx="256" cy="324" r="7" fill="#E6C35C" stroke="#04241B" stroke-width="2" />
+
+  <!-- Subtle Gold Divider Arc Under Book -->
+  <path
+    d="M 118 352 Q 256 364 394 352"
+    fill="none"
+    stroke="#C59B27"
+    stroke-width="2.5"
+    stroke-opacity="0.7"
+  />
+
+  <!-- Clear Balanced Typography -->
+  <text
+    x="256"
+    y="398"
+    text-anchor="middle"
+    font-family="Cairo, Tajawal, Arial, sans-serif"
+    font-weight="900"
+    font-size="34"
+    fill="#FFFFFF"
+  >إعدادية المنتظر للبنين</text>
+
+  <text
+    x="256"
+    y="436"
+    text-anchor="middle"
+    font-family="Cairo, Tajawal, Arial, sans-serif"
+    font-weight="700"
+    font-size="20"
+    fill="#E6C35C"
+  >تأسست عام : 2023</text>
+</svg>

@@ -1,0 +1,6 @@
+{
+  "name": "إعدادية المنتظر للبنين — بوابة النتائج المدرسية",
+  "description": "الموقع المدرسي المتكامل لإدارة الدرجات والنتائج وكشوف التقييم الرسمية لإعدادية المنتظر للبنين.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

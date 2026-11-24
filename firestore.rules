@@ -1,0 +1,144 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isBootstrappedOwner() {
+      return isVerifiedUser() && request.auth.token.email == 'ronsm799@gmail.com';
+    }
+
+    function isAdmin() {
+      return isVerifiedUser() && (
+        isBootstrappedOwner() ||
+        (
+          exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true
+        )
+      );
+    }
+
+    function isValidAdminUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'active']) &&
+        data.keys().hasOnly(['uid', 'email', 'role', 'active', 'createdAt']) &&
+        isValidId(data.uid) &&
+        data.email is string && data.email.size() >= 3 && data.email.size() <= 200 &&
+        data.role in ['owner', 'supervisor'] &&
+        data.active is bool &&
+        (!('createdAt' in data) || data.createdAt is timestamp);
+    }
+
+    function isValidAnnouncement(data) {
+      return data.keys().hasAll(['title', 'body', 'status', 'publishDate', 'authorUid']) &&
+        data.keys().hasOnly(['title', 'body', 'status', 'publishDate', 'authorUid', 'createdAt', 'updatedAt']) &&
+        data.title is string && data.title.size() >= 2 && data.title.size() <= 200 &&
+        data.body is string && data.body.size() >= 2 && data.body.size() <= 4000 &&
+        data.status in ['draft', 'published', 'archived'] &&
+        data.publishDate is string && data.publishDate.size() >= 4 && data.publishDate.size() <= 32 &&
+        data.authorUid is string && data.authorUid.size() >= 1 && data.authorUid.size() <= 128 &&
+        (!('createdAt' in data) || data.createdAt is timestamp) &&
+        (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidAdminNote(data) {
+      return data.keys().hasAll(['title', 'content', 'pinned', 'ownerUid']) &&
+        data.keys().hasOnly(['title', 'content', 'pinned', 'ownerUid', 'updatedAt']) &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+        data.content is string && data.content.size() <= 4000 &&
+        data.pinned is bool &&
+        data.ownerUid is string && data.ownerUid == request.auth.uid && data.ownerUid.size() <= 128 &&
+        (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    function isValidSchoolConfig(data) {
+      return data.keys().hasAll(['schoolName', 'academicYear']) &&
+        data.keys().hasOnly(['schoolName', 'ministryHeader', 'directorate', 'academicYear', 'updatedAt']) &&
+        data.schoolName is string && data.schoolName.size() >= 2 && data.schoolName.size() <= 200 &&
+        data.academicYear is string && data.academicYear.size() >= 4 && data.academicYear.size() <= 50 &&
+        (!('ministryHeader' in data) || (data.ministryHeader is string && data.ministryHeader.size() <= 200)) &&
+        (!('directorate' in data) || (data.directorate is string && data.directorate.size() <= 200)) &&
+        (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    // Connection test probe path (read-only health check)
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // Admins RBAC registry (PII-protected)
+    match /admins/{uid} {
+      allow get: if isValidId(uid) && isVerifiedUser() && (request.auth.uid == uid || isBootstrappedOwner());
+      allow list: if false;
+      allow create: if isValidId(uid) && isBootstrappedOwner() && isValidAdminUser(incoming()) &&
+        incoming().uid == uid &&
+        (!('createdAt' in incoming()) || incoming().createdAt == request.time);
+      allow update: if isValidId(uid) && isBootstrappedOwner() && isValidAdminUser(incoming()) &&
+        incoming().uid == existing().uid &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['role', 'active', 'email']);
+      allow delete: if isValidId(uid) && isBootstrappedOwner();
+    }
+
+    // Announcements: published visible publicly; full management by verified admins
+    match /announcements/{announcementId} {
+      allow get: if isValidId(announcementId) && (existing().status == 'published' || isAdmin());
+      allow list: if resource.data.status == 'published' || isAdmin();
+      allow create: if isValidId(announcementId) && isAdmin() && isValidAnnouncement(incoming()) &&
+        incoming().authorUid == request.auth.uid &&
+        (!('createdAt' in incoming()) || incoming().createdAt == request.time) &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time);
+      allow update: if isValidId(announcementId) && isAdmin() && isValidAnnouncement(incoming()) &&
+        incoming().authorUid == existing().authorUid &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'body', 'status', 'publishDate', 'updatedAt']) &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time);
+      allow delete: if isValidId(announcementId) && isAdmin();
+    }
+
+    // Admin Notes: strictly owner-isolated
+    match /adminNotes/{noteId} {
+      allow get: if isValidId(noteId) && isVerifiedUser() && existing().ownerUid == request.auth.uid;
+      allow list: if isVerifiedUser() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isValidId(noteId) && isVerifiedUser() && isValidAdminNote(incoming()) &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time);
+      allow update: if isValidId(noteId) && isVerifiedUser() && existing().ownerUid == request.auth.uid &&
+        isValidAdminNote(incoming()) &&
+        incoming().ownerUid == existing().ownerUid &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'pinned', 'updatedAt']) &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time);
+      allow delete: if isValidId(noteId) && isVerifiedUser() && existing().ownerUid == request.auth.uid;
+    }
+
+    // Public school institutional metadata
+    match /settings/{settingId} {
+      allow get: if isValidId(settingId);
+      allow list: if false;
+      allow create: if isValidId(settingId) && isAdmin() && isValidSchoolConfig(incoming()) &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time);
+      allow update: if isValidId(settingId) && isAdmin() && isValidSchoolConfig(incoming()) &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['schoolName', 'ministryHeader', 'directorate', 'academicYear', 'updatedAt']) &&
+        (!('updatedAt' in incoming()) || incoming().updatedAt == request.time);
+      allow delete: if false;
+    }
+  }
+}

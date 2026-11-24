@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-display: "Cairo", "Tajawal", sans-serif;
+    --font-body: "Tajawal", "Cairo", sans-serif;
+    --font-formal: "Amiri", "Cairo", serif;
+    --font-mono: "JetBrains Mono", monospace;
+    --school-navy: #0B1F3A;
+    --school-blue: #1E4E8C;
+    --school-gold: #C59B27;
+  }
+
+  html {
+    font-family: var(--font-body);
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-formal {
+    font-family: var(--font-formal);
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Official A4 Iraqi School Report Card Proportions & Print Rules */
+.a4-sheet {
+  width: 210mm;
+  min-width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+.a4-landscape-sheet {
+  width: 297mm;
+  min-width: 297mm;
+  min-height: 210mm;
+  box-sizing: border-box;
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+@page {
+  size: auto;
+  margin: 7mm;
+}
+
+@media print {
+  html, body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .overflow-x-auto,
+  .overflow-auto,
+  .overflow-hidden {
+    overflow: visible !important;
+  }
+
+  .print-only-sheet {
+    display: block !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    visibility: visible !important;
+  }
+
+  .print-sheet-wrapper {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .print-sheet-wrapper > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .print-sheet {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    border: 1.5px solid #000000 !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .group-print-sheet {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    border: 1.5px solid #000000 !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-page-break {
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

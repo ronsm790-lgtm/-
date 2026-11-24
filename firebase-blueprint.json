@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized Google Workspace / Firebase admin profile for managing school cloud sync and notes.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 200 },
+        "role": { "type": "string", "enum": ["owner", "supervisor"] },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role", "active"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "Official school announcement synced to Firestore for real-time public display.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 2, "maxLength": 200 },
+        "body": { "type": "string", "minLength": 2, "maxLength": 4000 },
+        "status": { "type": "string", "enum": ["draft", "published", "archived"] },
+        "publishDate": { "type": "string", "maxLength": 32 },
+        "authorUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "body", "status", "publishDate", "authorUid"]
+    },
+    "AdminNote": {
+      "title": "AdminNote",
+      "description": "Private administrative note and exam checklist item.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "content": { "type": "string", "maxLength": 4000 },
+        "pinned": { "type": "boolean" },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "pinned", "ownerUid"]
+    },
+    "SchoolConfig": {
+      "title": "SchoolConfig",
+      "description": "Public institutional branding and academic year metadata.",
+      "type": "object",
+      "properties": {
+        "schoolName": { "type": "string", "maxLength": 200 },
+        "ministryHeader": { "type": "string", "maxLength": 200 },
+        "directorate": { "type": "string", "maxLength": 200 },
+        "academicYear": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["schoolName", "academicYear"]
+    }
+  },
+  "firestore": {
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Admin authorization registry keyed by Firebase UID."
+    },
+    "/announcements/{announcementId}": {
+      "schema": { "$ref": "#/entities/Announcement" },
+      "description": "School announcements; published announcements are publicly readable."
+    },
+    "/adminNotes/{noteId}": {
+      "schema": { "$ref": "#/entities/AdminNote" },
+      "description": "Private administrative notes strictly isolated to the owning admin."
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/SchoolConfig" },
+      "description": "Public school institutional metadata."
+    }
+  }
+}
